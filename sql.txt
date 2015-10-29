@@ -1,0 +1,89 @@
+C:\MAMP\Library\bin\mysql>mysql -uroot -proot
+mysql>CREATE DATABASE college;
+mysql>SHOW DATABASES;
+mysql>USE college;
+
+//EX1
+CREATE TABLE students (
+student_id INTEGER NOT NULL PRIMARY KEY,
+name VARCHAR(10) NOT NULL,
+year TINYINT NOT NULL DEFAULT 1,
+dept_no INTEGER NOT NULL,
+major VARCHAR(20));
+
+CREATE TABLE department (
+dept_no INTEGER AUTO_INCREMENT NOT NULL PRIMARY KEY ,
+dept_name VARCHAR(20) NOT NULL UNIQUE,
+office VARCHAR(20) NOT NULL,
+office_tel VARCHAR(13));
+
+ALTER TABLE student ADD COLUMN gender VARCHAR(6);
+ALTER TABLE department CHANGE COLUMN dept_name dept_name VARCHAR(40) NOT NULL UNIQUE;
+ALTER TABLE department CHANGE COLUMN office office VARCHAR(30) NOT NULL;
+
+//EX2
+ALTER TABLE student DROP COLUMN gender;
+
+INSERT INTO students VALUES (20070002,'James Bond', 3, 4,'Business Administration');
+INSERT INTO students VALUES (20060001,'Queenie', 4, 4,'Business Administration');
+INSERT INTO students VALUES (20030001,'Reonardo', 4, 2,'Electronic Engineering');
+INSERT INTO students VALUES (20040003,'Julia', 3, 2,'Electronic Engineering');
+INSERT INTO students VALUES (20060002,'Roosevelt', 3, 1,'Computer Science');
+INSERT INTO students VALUES (20100002,'Fearne', 3, 4,'Business Administration');
+INSERT INTO students VALUES (20110001,'Chloe', 2, 1,'Computer Science');
+INSERT INTO students VALUES (20080003,'Amy', 4, 3,'Law');
+INSERT INTO students VALUES (20040002,'Selina', 4, 5,'English Literature');
+INSERT INTO students VALUES (20070001,'Ellen', 4, 4,'Business Administration');
+INSERT INTO students VALUES (20100001,'Kathy', 3, 4,'Business Administration');
+INSERT INTO students VALUES (20110002,'Lucy', 2, 2,'Electronic Engineering');
+INSERT INTO students VALUES (20030002,'Michelle', 5, 1,'Computer Science');
+INSERT INTO students VALUES (20070003,'April', 4, 3,'Law');
+INSERT INTO students VALUES (20070005,'Alicia', 2, 5,'English Literature');
+INSERT INTO students VALUES (20100003,'Yullia', 3, 1,'Computer Science');
+INSERT INTO students VALUES (20070007,'Ashlee', 2, 4,'Business Administration');
+
+INSERT INTO students VALUES (20070002,'James Bond', 3, 4,'Business Administration'),(20060001,'Queenie', 4, 4,'Business Administration'),(20030001,'Reonardo', 4, 2,'Electronic Engineering'),(20040003,'Julia', 3, 2,'Electronic Engineering'),(20060002,'Roosevelt', 3, 1,'Computer Science');
+INSERT INTO students VALUES (20100002,'Fearne', 3, 4,'Business Administration'),(20110001,'Chloe', 2, 1,'Computer Science'),(20080003,'Amy', 4, 3,'Law'),(20040002,'Selina', 4, 5,'English Literature'),(20070001,'Ellen', 4, 4,'Business Administration');
+INSERT INTO students VALUES (20100001,'Kathy', 3, 4,'Business Administration'),(20110002,'Lucy', 2, 2,'Electronic Engineering'),(20030002,'Michelle', 5, 1,'Computer Science'),(20070003,'April', 4, 3,'Law'),(20070005,'Alicia', 2, 5,'English Literature'),(20100003,'Yullia', 3, 1,'Computer Science'),(20070007,'Ashlee', 2, 4,'Business Administration');
+
+INSERT INTO department VALUES (1,'Computer Science','Engineering building','02-3290-0123');
+INSERT INTO department VALUES (2,'Electronic Engineering','Engineering building','02-3290-2345');
+INSERT INTO department VALUES (3,'Law', 'Law building', '02-3290-7896');
+INSERT INTO department VALUES (4,'Business Administration', 'Administration building', '02-3290-1112');
+INSERT INTO department VALUES (5,'English Literature', 'Literature building', '02-3290-4412');
+
+//EX3
+UPDATE department SET dept_name = 'Electronic and Electrical Engineering' WHERE dept_name = 'Electronic Engineering';
+INSERT INTO department VALUES (6,'Education', 'Education Building', '02-3290-2347');
+UPDATE students SET major = 'Education', dept_no=6 WHERE name = 'Chloe';
+DELETE FROM students WHERE name = 'Michelle';
+DELETE FROM students WHERE name = 'Fearne';
+
+//EX4
+SELECT * FROM students WHERE major='Computer Science';
+SELECT student_id, year,major FROM students;
+SELECT * FROM students WHERE year = 3;
+SELECT * FROM students WHERE year = 1 OR year = 2;
+SELECT name,major FROM students,department WHERE dept_name = 'Business Administration' AND students.dept_no = department.dept_no;
+
+//EX5
+SELECT student_id,name FROM students WHERE student_id LIKE "%2007%";
+SELECT student_id,name FROM students ORDER BY student_id;
+SELECT major, AVG(year) FROM students GROUP BY major HAVING AVG(year)>3;
+SELECT student_id,name FROM students WHERE student_id LIKE "%2007%" LIMIT 2;
+
+//EX6
+SELECT role FROM roles,movies WHERE movie_id = id AND name = "Pi";
+SELECT first_name,last_name,role FROM roles,movies,actors WHERE roles.movie_id = movies.id AND name = "Pi" AND actors.id = roles.actor_id;
+
+//Does not work
+//SELECT first_name,last_name FROM (SELECT * FROM movies m JOIN roles r ON r.movie_id=m.id JOIN actors a ON a.id=r.actor_id WHERE m.name = "Kill Bill: Vol. 1") set1 JOIN (SELECT * FROM movies m2 JOIN roles r2 ON r2.movie_id=m2.id JOIN actors a2 ON a2.id=r2.actor_id WHERE m2.name = "Kill Bill: Vol. 2") set2 ON set1.a.first_name=set2.a2.first_name AND set1.a.last_name=set2.a2.last_name;
+
+SELECT first_name,last_name, COUNT(a.id) FROM movies m JOIN roles r ON r.movie_id=m.id JOIN actors a ON a.id=r.actor_id GROUP BY a.id ORDER BY COUNT(a.id) DESC LIMIT 7;
+
+SELECT genre,COUNT(genre) FROM movies m JOIN movies_genres mg ON m.id=mg.movie_id GROUP BY mg.movie_id ORDER BY COUNT(genre) DESC LIMIT 3;
+
+SELECT first_name,last_name,COUNT(*) FROM directors d JOIN directors_genres dg ON d.id=dg.director_id WHERE dg.genre="Thriller" GROUP BY d.id;
+
+
+
